@@ -213,7 +213,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         val minorVersionString = version.substring(minorTextStart, minorTextEnd)
         try {
             val currentMinor = minorVersionString.toInt()
-            return version.substring(0, minorTextStart) + (currentMinor + 1) + version.substring(minorTextEnd)
+            return version.substring(0, minorTextStart) + (currentMinor + 1) + ".0"
         } catch (e: Exception) {
             throw GradleException(
                 "can't increment project version from current version '$version' - it's expected to conform "

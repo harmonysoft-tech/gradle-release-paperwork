@@ -1,15 +1,27 @@
+
 plugins {
     kotlin("jvm") version "1.7.20"
-    `java-gradle-plugin`
+    id("com.gradle.plugin-publish") version "1.0.0"
 }
+
+group = "tech.harmonysoft"
+version = "1.0.0"
 
 gradlePlugin {
     plugins {
         create("releasePaperWorkPlugin") {
             id = "tech.harmonysoft.oss.gradle.release.paperwork"
             implementationClass = "tech.harmonysoft.oss.gradle.release.paperwork.GradleReleasePaperworkPlugin"
+            displayName = "gradle git release paperwork"
+            description = "Automatically populates release notes by git commits on release"
         }
     }
+}
+
+pluginBundle {
+    website = "https://github.com/denis-zhdanov/gradle-release-paperwork/README.md"
+    vcsUrl = "https://github.com/denis-zhdanov/gradle-release-paperwork"
+    tags = listOf("git", "release")
 }
 
 repositories {

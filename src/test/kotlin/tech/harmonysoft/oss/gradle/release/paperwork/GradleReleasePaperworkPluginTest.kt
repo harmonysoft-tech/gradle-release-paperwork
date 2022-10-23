@@ -373,4 +373,21 @@ internal class GradleReleasePaperworkPluginTest {
               * ...
         """.trimIndent())
     }
+
+    @Test
+    fun `when version is incremented by the plugin then the 'patch' version is reset`() {
+        gradleFile.appendText("""
+            version = "1.0.1"
+        """.trimIndent())
+        runBuild()
+
+        makeCommit("feature2")
+        runBuild()
+        verifyReleaseNotes("""
+            ${GradleReleasePaperworkPlugin.getReleaseDescription("1.1.0", dateTimeUtc, null)}
+              * ${getCommitDescriptionInNotes("feature2")}
+            ${GradleReleasePaperworkPlugin.getReleaseDescription("1.0.1", dateTimeUtc, null)}
+              * ${getCommitDescriptionInNotes(commit1message)}
+        """.trimIndent())
+    }
 }

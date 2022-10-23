@@ -11,9 +11,9 @@ Example:
   * there were two non-merge git commits after `3.5.1`, they had commit messages `message1` and `message2`
   * the plugin automatically populates *RELEASE_NOTES.md* by the text below:
     ```
-    v3.6.1
-    * commit1
-    * commit2
+    ## v3.6.1 released on 19 Oct 2022 UTC
+    * 8dadf86f930b189d5e16457a309e41c62da5e949 - message1
+    * 6382b31bc781339d884708196fb87be7e31bb472 - message2
     ```
   * the plugin commits the changes in *build.gradle.kts* and *RELEASE_NOTES.md* into git
 
@@ -21,13 +21,29 @@ Example:
 
 1. [Overview](#overview)
 2. [Table of Contents](#table-of-contents)
-3. [Configuration](#configuration)
+3. [How to Use](#how-to-use)
+4. [Configuration](#configuration)
     * [Version File Location](#version-file-location)
     * [Version Regex](#version-regex)
     * [Release Notes File Location](#release-notes-file-location)
     * [Additional Release Info](#additional-release-info)
     * [Change Description](#change-description)
     * [Changes Limit](#changes-limit)
+
+## How to Use
+
+The plugin adds `release-paperwork` task to the root project. It does the necessary actions, namely:
+1. Collect unreleased changes (git commits)
+2. Update current project version if necessary
+3. Populate release notes by target commits info
+
+By default, the plugin assumes that [semver](https://semver.org/) is used by the host project and it increments 'minor' version on release. However, sometimes we want to explicitly define a version to use, for example increment a 'patch' version on bugfix release. The plugin uses currently defined version if it's not the same as the last released version. Example:
+
+1. Version `1.0.0` was released
+2. New bug fix commit is made
+3. Project version is explicitly set as `1.0.1`
+4. `release-paperwork` task is called
+5. Release notes are populated by the bug fix commit info for version `1.0.1`. Project version is not changed
 
 ## Configuration
 

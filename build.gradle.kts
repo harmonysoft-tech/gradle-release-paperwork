@@ -19,7 +19,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/denis-zhdanov/gradle-release-paperwork/README.md"
+    website = "https://github.com/denis-zhdanov/gradle-release-paperwork/blob/main/README.md"
     vcsUrl = "https://github.com/denis-zhdanov/gradle-release-paperwork"
     tags = listOf("git", "release")
 }

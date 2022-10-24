@@ -10,11 +10,13 @@ Example:
   * the plugin automatically applies version `3.6.1` to the *build.gradle.kts*
   * there were two non-merge git commits after `3.5.1`, they had commit messages `message1` and `message2`
   * the plugin automatically populates *RELEASE_NOTES.md* by the text below:
+
     ```
     ## v3.6.1 released on 19 Oct 2022 UTC
     * 8dadf86f930b189d5e16457a309e41c62da5e949 - message1
     * 6382b31bc781339d884708196fb87be7e31bb472 - message2
     ```
+
   * the plugin commits the changes in *build.gradle.kts* and *RELEASE_NOTES.md* into git
 
 ## Table of Contents

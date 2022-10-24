@@ -2,6 +2,7 @@
 plugins {
     kotlin("jvm") version "1.7.20"
     id("com.gradle.plugin-publish") version "1.0.0"
+    id("tech.harmonysoft.oss.gradle.release.paperwork") version "1.0.0"
 }
 
 group = "tech.harmonysoft"
@@ -19,7 +20,7 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = "https://github.com/denis-zhdanov/gradle-release-paperwork/blob/main/README.md"
+    website = "http://gradle-release-paperwork.oss.harmonysoft.tech/"
     vcsUrl = "https://github.com/denis-zhdanov/gradle-release-paperwork"
     tags = listOf("git", "release")
 }

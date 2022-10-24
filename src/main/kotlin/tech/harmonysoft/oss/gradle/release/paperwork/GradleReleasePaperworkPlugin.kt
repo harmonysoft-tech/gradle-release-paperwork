@@ -49,7 +49,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                     incrementVersion(currentProjectVersion)
                 }
                 project.logger.lifecycle("Using version '$versionToRelease' for releasing")
-                populateReleaseNotes(extension, releaseNotesFile, versionToRelease, changes)
+                populateReleaseNotes(project, extension, releaseNotesFile, versionToRelease, changes)
                 applyNewVersion(project, extension, currentProjectVersion, versionToRelease)
             }
         }
@@ -270,6 +270,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
     }
 
     private fun populateReleaseNotes(
+        project: Project,
         extension: GradleReleasePaperworkPluginExtension,
         releaseNotesFile: File,
         newVersion: String,
@@ -288,6 +289,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         val maxChanges = getMaxChangesPerRelease(extension)
         changes.forEachIndexed { i, change ->
             if (i < maxChanges) {
+                project.logger.lifecycle("Adding the following change into release notes: $change")
                 tmpFile.appendText(change)
                 tmpFile.appendText("\n")
             } else if (i == maxChanges) {

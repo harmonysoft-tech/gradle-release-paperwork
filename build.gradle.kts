@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "tech.harmonysoft"
-version = "1.1.0"
+version = "1.0.1"
 
 gradlePlugin {
     plugins {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-Takes care of automatic version update in gradle projects and populating change log.
+Takes care of automatic version update in git based gradle projects and populates release notes.
 
 Example:
   * current project's *build.gradle.kts* has `version = "3.5.1"`

@@ -7,7 +7,7 @@ Takes care of automatic version update in git based gradle projects and populate
 Example:
   * current project's *build.gradle.kts* has `version = "3.5.1"`
   * last released version in *RELEASE_NOTES.md* is the same (`3.5.1`)
-  * the plugin automatically applies version `3.6.1` to the *build.gradle.kts*
+  * the plugin automatically applies version `3.6.0` to the *build.gradle.kts*
   * there were two non-merge git commits after `3.5.1`, they had commit messages `message1` and `message2`
   * the plugin automatically populates *RELEASE_NOTES.md* by the text below:
 

@@ -51,6 +51,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                 project.logger.lifecycle("Using version '$versionToRelease' for releasing")
                 populateReleaseNotes(project, extension, releaseNotesFile, versionToRelease, changes)
                 applyNewVersion(project, extension, currentProjectVersion, versionToRelease)
+                commitChanges(project, versionToRelease, releaseNotesFile, getProjectVersionFile(project, extension))
             }
         }
     }
@@ -315,8 +316,13 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         val projectVersionFile = getProjectVersionFile(project, extension)
         val newContent = projectVersionFile.readText().replace(currentVersion, newVersion)
         projectVersionFile.writeText(newContent)
+    }
+
+    private fun commitChanges(project: Project, newVersion: String, vararg changedFiles: File) {
         val git = Git.open(project.rootDir)
-        git.add().addFilepattern(projectVersionFile.relativeTo(project.rootDir).name).call()
+        for (file in changedFiles) {
+            git.add().addFilepattern(file.relativeTo(project.rootDir).name).call()
+        }
         git.commit().setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
     }
 

@@ -420,4 +420,39 @@ internal class GradleReleasePaperworkPluginTest {
             version = "1.8.0"
         """.trimIndent(), gradleFile)
     }
+
+    @Test
+    fun `when groovy DSL is used with custom change description then it works fine`() {
+        gradleFile.delete()
+        val buildGradle = File(rootProjectDir, "build.gradle")
+        buildGradle.writeText("""
+            plugins {
+              id "tech.harmonysoft.oss.gradle.release.paperwork"
+            }
+
+            releasePaperwork {
+                changeDescription.set(new kotlin.jvm.functions.Function1<String, String>() {
+
+                    private final java.util.regex.Pattern mergePattern = java.util.regex.Pattern.compile(
+                        "[Mm]erged branch '[^']+' into '[^']+'"
+                    )
+                
+                    String invoke(String description) {
+                        return mergePattern.matcher(description).replaceAll("").trim()
+                    }
+                })
+            }
+
+            version = '1.0.0'
+        """.trimIndent())
+
+        makeCommit("Merged branch 'bla' into 'bla-bla'")
+
+        runBuild()
+
+        verifyReleaseNotes("""
+            ${GradleReleasePaperworkPlugin.getReleaseDescription("1.0.0", dateTimeUtc, null)}
+              * ${getCommitDescriptionInNotes(commit1message)}
+        """.trimIndent())
+    }
 }

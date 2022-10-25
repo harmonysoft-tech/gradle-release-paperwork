@@ -93,7 +93,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                 }
             }
         } else {
-            val groovyFile = project.file("build.groovy")
+            val groovyFile = project.file("build.gradle")
             if (groovyFile.isFile) {
                 groovyFile
             } else {
@@ -246,7 +246,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
             val commitMessage = commit.shortMessage.trim().replace("\n", " ")
             val changeDescription = if (extension.changeDescription.isPresent) {
                 extension.changeDescription.get()(commitMessage).apply {
-                    if (this == null) {
+                    if (this.isNullOrBlank()) {
                         project.logger.lifecycle(
                             "Commit ${commit.id.name()} is skipped because its commit message is dropped by custom "
                             + "commit description logic"
@@ -256,7 +256,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
             } else {
                 commitMessage
             }
-            if (changeDescription != null) {
+            if (!changeDescription.isNullOrBlank()) {
                 result += "  * ${commit.id.name} $changeDescription"
                 if (result.size > maxChanges) {
                     break

@@ -1,3 +1,5 @@
+## v1.3.0 released on 25 Oct 2022 UTC
+  * f9de213a668a1959e5fd9a0c21e1aaf40ea6df99 skip changes which are blank strings; use 'build.gradle' instead of 'build.groovy'
 ## v1.2.0 released on 25 Oct 2022 UTC
   * 90065e0a053da7288c8dacf5856d74a7c394c142 Make sure that correct version is updated on release
   * ec8e67c097941dcef7cbe05cd7774ea02c47f40e corrected META-INF setup

@@ -58,11 +58,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
 
     private fun parseCurrentVersion(project: Project, extension: GradleReleasePaperworkPluginExtension): String {
         val projectVersionFile = getProjectVersionFile(project, extension)
-        val versionRegex = if (extension.projectVersionRegex.isPresent) {
-            extension.projectVersionRegex.get().toRegex()
-        } else {
-            DEFAULT_PROJECT_VERSION_REGEX
-        }
+        val versionRegex = getProjectVersionRegex(extension)
         val lines = projectVersionFile.readLines()
         for (line in lines) {
             versionRegex.find(line)?.let {
@@ -79,6 +75,14 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
             "can't extract project version from file ${projectVersionFile.canonicalPath} using "
             + "the following regex: $versionRegex"
         )
+    }
+
+    private fun getProjectVersionRegex(extension: GradleReleasePaperworkPluginExtension): Regex {
+        return if (extension.projectVersionRegex.isPresent) {
+            extension.projectVersionRegex.get().toRegex()
+        } else {
+            DEFAULT_PROJECT_VERSION_REGEX
+        }
     }
 
     private fun getProjectVersionFile(project: Project, extension: GradleReleasePaperworkPluginExtension): File {
@@ -314,7 +318,16 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         newVersion: String
     ) {
         val projectVersionFile = getProjectVersionFile(project, extension)
-        val newContent = projectVersionFile.readText().replace(currentVersion, newVersion)
+        val projectVersionRegex = getProjectVersionRegex(extension)
+        val oldContent = projectVersionFile.readText()
+        val newContent = projectVersionRegex.find(oldContent)?.let { match ->
+            val regionWithNewVersion = oldContent.substring(match.range).replace(currentVersion, newVersion)
+            oldContent.substring(0, match.range.first) + regionWithNewVersion +
+            oldContent.substring(match.range.last + 1)
+        } ?: throw GradleException(
+            "can't apply new version ($newVersion) to file ${projectVersionFile.canonicalPath} - can't find "
+            + "version there using regex $projectVersionRegex"
+        )
         projectVersionFile.writeText(newContent)
     }
 

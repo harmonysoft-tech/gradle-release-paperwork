@@ -390,4 +390,34 @@ internal class GradleReleasePaperworkPluginTest {
               * ${getCommitDescriptionInNotes(commit1message)}
         """.trimIndent())
     }
+
+    @Test
+    fun `when a plugin with particular version is applied then its version is not overwritten during release`() {
+        gradleFile.writeText("""
+            plugins {
+              id("tech.harmonysoft.oss.gradle.release.paperwork")
+              kotlin("jvm") version "1.7.20"
+            }
+            
+            version = "1.7.20"
+        """.trimIndent())
+
+        val releaseNotesFile = File(rootProjectDir, GradleReleasePaperworkPlugin.DEFAULT_RELEASE_NOTES_FILE)
+        releaseNotesFile.writeText("""
+            ${getReleaseDescription("1.7.20")}
+              * ${getCommitDescriptionInNotes(commit1message)}
+        """.trimIndent())
+
+        makeCommit("feature2")
+        runBuild()
+
+        verifyFileContent("""
+            plugins {
+              id("tech.harmonysoft.oss.gradle.release.paperwork")
+              kotlin("jvm") version "1.7.20"
+            }
+            
+            version = "1.8.0"
+        """.trimIndent(), gradleFile)
+    }
 }

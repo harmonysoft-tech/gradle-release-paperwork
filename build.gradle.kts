@@ -2,11 +2,11 @@
 plugins {
     kotlin("jvm") version "1.7.20"
     id("com.gradle.plugin-publish") version "1.0.0"
-    id("tech.harmonysoft.oss.gradle.release.paperwork") version "1.1.0"
+    id("tech.harmonysoft.oss.gradle.release.paperwork") version "1.2.0"
 }
 
 group = "tech.harmonysoft"
-version = "1.1.0"
+version = "1.2.0"
 
 gradlePlugin {
     plugins {

@@ -1,3 +1,5 @@
+## v1.3.0 released on 25 Oct 2022 UTC
+  * 90065e0a053da7288c8dacf5856d74a7c394c142 Make sure that correct version is updated on release
 ## v1.2.0 released on 25 Oct 2022 UTC
   * ec8e67c097941dcef7cbe05cd7774ea02c47f40e corrected META-INF setup
 ## v1.1.0 released on 24 Oct 2022 UTC

@@ -1,3 +1,6 @@
+## v1.4.0 released on 27 Oct 2022 UTC
+  * 6ab8609e1f63aabea9bca5a4629f5a677cb1b6dc creating git tag on release
+  * a157bae2dac17558c946e82c82300ff43ebe9ecd corrected log output
 ## v1.3.0 released on 25 Oct 2022 UTC
   * f9de213a668a1959e5fd9a0c21e1aaf40ea6df99 skip changes which are blank strings; use 'build.gradle' instead of 'build.groovy'
 ## v1.2.0 released on 25 Oct 2022 UTC

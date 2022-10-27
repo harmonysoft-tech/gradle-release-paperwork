@@ -248,8 +248,8 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                 extension.changeDescription.get()(commitMessage).apply {
                     if (this.isNullOrBlank()) {
                         project.logger.lifecycle(
-                            "Commit ${commit.id.name()} is skipped because its commit message is dropped by custom "
-                            + "commit description logic"
+                            "Commit ${commit.id.name()} is skipped because its message is dropped by custom "
+                            + "commit description filtering logic ($commitMessage)"
                         )
                     }
                 }

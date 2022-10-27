@@ -1,6 +1,7 @@
 package tech.harmonysoft.oss.gradle.release.paperwork
 
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.revwalk.RevCommit
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -51,7 +52,12 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                 project.logger.lifecycle("Using version '$versionToRelease' for releasing")
                 populateReleaseNotes(project, extension, releaseNotesFile, versionToRelease, changes)
                 applyNewVersion(project, extension, currentProjectVersion, versionToRelease)
-                commitChanges(project, versionToRelease, releaseNotesFile, getProjectVersionFile(project, extension))
+                val commit = commitChanges(
+                    project = project,
+                    newVersion = versionToRelease,
+                    changedFiles = arrayOf(releaseNotesFile, getProjectVersionFile(project, extension))
+                )
+                createTag(versionToRelease, project, commit.id.name)
             }
         }
     }
@@ -331,12 +337,20 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         projectVersionFile.writeText(newContent)
     }
 
-    private fun commitChanges(project: Project, newVersion: String, vararg changedFiles: File) {
+    private fun commitChanges(project: Project, newVersion: String, vararg changedFiles: File): RevCommit {
         val git = Git.open(project.rootDir)
         for (file in changedFiles) {
             git.add().addFilepattern(file.relativeTo(project.rootDir).name).call()
         }
-        git.commit().setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
+        return git.commit().setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
+    }
+
+    private fun createTag(newVersion: String, project: Project, commitId: String) {
+        Git
+            .open(project.rootDir)
+            .tag()
+            .setName(commitId)
+            .setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
     }
 
     companion object {

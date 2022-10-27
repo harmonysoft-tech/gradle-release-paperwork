@@ -4,6 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.revwalk.RevCommit
+import org.eclipse.jgit.revwalk.RevWalk
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.BeforeEach
@@ -454,5 +455,21 @@ internal class GradleReleasePaperworkPluginTest {
             ${GradleReleasePaperworkPlugin.getReleaseDescription("1.0.0", dateTimeUtc, null)}
               * ${getCommitDescriptionInNotes(commit1message)}
         """.trimIndent())
+    }
+
+    @Test
+    fun `when release is made then git tag is created`() {
+        val version = "1.0.0"
+        gradleFile.appendText("""
+            version = "$version"
+        """.trimIndent())
+        runBuild()
+
+        val expected = String.format(GradleReleasePaperworkPlugin.RELEASE_COMMIT_MESSAGE_PATTERN, version)
+        val tag = git.tagList().call().find {
+            val actual = RevWalk(git.repository).parseTag(it.objectId).fullMessage
+            actual == expected
+        }
+        assertThat(tag).isNotNull
     }
 }

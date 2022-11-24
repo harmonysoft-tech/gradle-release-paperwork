@@ -340,7 +340,9 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
     private fun commitChanges(project: Project, newVersion: String, vararg changedFiles: File): RevCommit {
         val git = Git.open(project.rootDir)
         for (file in changedFiles) {
-            git.add().addFilepattern(file.relativeTo(project.rootDir).name).call()
+            val pathToCommit = project.rootDir.toPath().relativize(file.toPath()).toString()
+            project.logger.lifecycle("committing file $pathToCommit")
+            git.add().addFilepattern(pathToCommit).call()
         }
         return git.commit().setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
     }

@@ -3,8 +3,12 @@ package tech.harmonysoft.oss.gradle.release.paperwork
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.fail
 import org.eclipse.jgit.api.Git
+import org.eclipse.jgit.diff.DiffFormatter
+import org.eclipse.jgit.diff.RawTextComparator
+import org.eclipse.jgit.lib.Constants
 import org.eclipse.jgit.revwalk.RevCommit
 import org.eclipse.jgit.revwalk.RevWalk
+import org.eclipse.jgit.util.io.DisabledOutputStream
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.junit.jupiter.api.BeforeEach
@@ -101,6 +105,22 @@ internal class GradleReleasePaperworkPluginTest {
 
     private fun verifyFileContent(expectedText: String, file: File) {
         assertThat(file.readText().trim()).isEqualTo(expectedText.trim())
+    }
+
+    private fun verifyFileCommitted(file: File) {
+        val walk = RevWalk(git.repository)
+        val head = git.repository.resolve(Constants.HEAD)
+        val headCommit = walk.parseCommit(head)
+        val parentCommit = walk.parseCommit(headCommit.getParent(0).id)
+        val diffFormatter = DiffFormatter(DisabledOutputStream.INSTANCE)
+        diffFormatter.setRepository(git.repository)
+        diffFormatter.setDiffComparator(RawTextComparator.DEFAULT)
+        val paths = diffFormatter.scan(parentCommit.tree, headCommit.tree).map {
+            it.newPath
+        }
+
+        val expectedPath = rootProjectDir.toPath().relativize(file.toPath())
+        assertThat(paths).contains(expectedPath.toString())
     }
 
     @Test
@@ -338,6 +358,7 @@ internal class GradleReleasePaperworkPluginTest {
                 const val APP = "$newVersion"
             }
         """.trimIndent(), versionFile)
+        verifyFileCommitted(versionFile)
     }
 
     @Test

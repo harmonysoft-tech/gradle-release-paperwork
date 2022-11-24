@@ -1,3 +1,5 @@
+## v1.5.0 released on 24 Nov 2022 UTC
+  * 367a51ced948f09dbc7643140707cac7bd565599 make sure to commit a version file if it's not in the project root
 ## v1.4.0 released on 27 Oct 2022 UTC
   * 6ab8609e1f63aabea9bca5a4629f5a677cb1b6dc creating git tag on release
   * a157bae2dac17558c946e82c82300ff43ebe9ecd corrected log output

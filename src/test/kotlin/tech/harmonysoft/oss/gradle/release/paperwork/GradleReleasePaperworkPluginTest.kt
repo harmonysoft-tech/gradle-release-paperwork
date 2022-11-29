@@ -488,7 +488,7 @@ internal class GradleReleasePaperworkPluginTest {
 
         val expected = String.format(GradleReleasePaperworkPlugin.RELEASE_COMMIT_MESSAGE_PATTERN, version)
         val tag = git.tagList().call().find {
-            val actual = RevWalk(git.repository).parseTag(it.objectId).fullMessage
+            val actual = it.name.substring("refs/tags/".length)
             actual == expected
         }
         assertThat(tag).isNotNull

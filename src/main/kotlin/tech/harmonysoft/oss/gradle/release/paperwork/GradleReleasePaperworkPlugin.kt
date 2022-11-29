@@ -57,7 +57,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                     newVersion = versionToRelease,
                     changedFiles = arrayOf(releaseNotesFile, getProjectVersionFile(project, extension))
                 )
-                createTag(versionToRelease, project, commit.id.name)
+                createTag(versionToRelease, project, commit)
             }
         }
     }
@@ -347,18 +347,20 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         return git.commit().setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
     }
 
-    private fun createTag(newVersion: String, project: Project, commitId: String) {
-        Git
-            .open(project.rootDir)
+    private fun createTag(newVersion: String, project: Project, commitId: RevCommit) {
+        val git = Git.open(project.rootDir)
+        git
             .tag()
-            .setName(commitId)
-            .setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
+            .setAnnotated(false)
+            .setObjectId(commitId)
+            .setName(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion))
+            .call()
     }
 
     companion object {
         val DEFAULT_PROJECT_VERSION_REGEX = """version\s*=\s*['"]([^'"]+)""".toRegex()
         const val DEFAULT_RELEASE_NOTES_FILE = "RELEASE_NOTES.md"
-        const val RELEASE_COMMIT_MESSAGE_PATTERN = "release %s"
+        const val RELEASE_COMMIT_MESSAGE_PATTERN = "release-%s"
         val RELEASE_COMMIT_REGEX = RELEASE_COMMIT_MESSAGE_PATTERN.replace("%s", "\\S+").toRegex()
         const val RELEASE_DESCRIPTION_FORMAT = "v<version> released on <date><additional-release-description>"
         const val COMMIT_DESCRIPTION_FORMAT = "  * <commit-hash> <commit-description>"

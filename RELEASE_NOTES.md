@@ -1,3 +1,5 @@
+## v1.6.0 released on 29 Nov 2022 UTC
+  * 0b7d1113919110eea4f95907a4877dc1edef6836 use lightweight tags instead of annotated tags
 ## v1.5.0 released on 24 Nov 2022 UTC
   * 367a51ced948f09dbc7643140707cac7bd565599 make sure to commit a version file if it's not in the project root
 ## v1.4.0 released on 27 Oct 2022 UTC

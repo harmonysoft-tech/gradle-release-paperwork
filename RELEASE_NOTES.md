@@ -1,3 +1,7 @@
+## v1.7.0 released on 29 Nov 2022 UTC
+  * fe0fa9be0c0a090826e0e8780baff533e240fa8e release paperwork 1.6.0
+  * 20a1275cd5f4df37132715f1237ad84c1d3f3141 logging tag creation
+  * a05d55c17507f1ed35f4e7d58a5e61b8738c1f22 release 1.6.0
 ## v1.6.0 released on 29 Nov 2022 UTC
   * 0b7d1113919110eea4f95907a4877dc1edef6836 use lightweight tags instead of annotated tags
 ## v1.5.0 released on 24 Nov 2022 UTC

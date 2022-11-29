@@ -349,11 +349,13 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
 
     private fun createTag(newVersion: String, project: Project, commitId: RevCommit) {
         val git = Git.open(project.rootDir)
+        val tagName = String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)
+        project.logger.lifecycle("creating git tag $tagName")
         git
             .tag()
             .setAnnotated(false)
             .setObjectId(commitId)
-            .setName(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion))
+            .setName(tagName)
             .call()
     }
 

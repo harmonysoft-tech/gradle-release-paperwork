@@ -18,6 +18,7 @@ Example:
     ```
 
   * the plugin commits the changes in *build.gradle.kts* and *RELEASE_NOTES.md* into git
+  * the plugin creates git tag `release-3.6.0` from the current sources
 
 ## Table of Contents
 

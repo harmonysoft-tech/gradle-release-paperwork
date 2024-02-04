@@ -486,7 +486,28 @@ internal class GradleReleasePaperworkPluginTest {
         """.trimIndent())
         runBuild()
 
-        val expected = String.format(GradleReleasePaperworkPlugin.RELEASE_COMMIT_MESSAGE_PATTERN, version)
+        val expected = String.format(GradleReleasePaperworkPlugin.DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN, version)
+        val tag = git.tagList().call().find {
+            val actual = it.name.substring("refs/tags/".length)
+            actual == expected
+        }
+        assertThat(tag).isNotNull
+    }
+
+    @Test
+    fun `when tagPrefix is defined then tag created will be using that`() {
+        val version = "1.0.0"
+        val prefix = "v"
+        gradleFile.appendText("""
+            version = "$version"
+            
+            releasePaperwork {
+                tagPrefix.set("$prefix")
+            }
+        """.trimIndent())
+        runBuild()
+
+        val expected = "$prefix$version"
         val tag = git.tagList().call().find {
             val actual = it.name.substring("refs/tags/".length)
             actual == expected

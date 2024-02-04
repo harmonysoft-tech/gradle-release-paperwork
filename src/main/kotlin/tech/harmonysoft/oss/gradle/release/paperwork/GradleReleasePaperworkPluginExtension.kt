@@ -15,4 +15,6 @@ interface GradleReleasePaperworkPluginExtension {
     val changeDescription: Property<(String) -> String?>
 
     val maxChangesPerRelease: Property<Int>
+
+    val tagPrefix: Property<String>
 }

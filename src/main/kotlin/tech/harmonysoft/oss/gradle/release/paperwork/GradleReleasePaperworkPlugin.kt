@@ -351,8 +351,8 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
             project.logger.lifecycle("committing file $pathToCommit")
             git.add().addFilepattern(pathToCommit).call()
         }
-         val tagPrefix = getTagPrefix(extension)
-        return git.commit().setMessage(String.format(tagPrefix, newVersion)).call()
+         val tagPattern = getTagPattern(extension)
+        return git.commit().setMessage(String.format(tagPattern, newVersion)).call()
     }
 
     private fun createTag(
@@ -362,7 +362,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         commitId: RevCommit
     ) {
         val git = Git.open(project.rootDir)
-        val tagName = String.format(getTagPrefix(extension), newVersion)
+        val tagName = String.format(getTagPattern(extension), newVersion)
         project.logger.lifecycle("creating git tag $tagName")
         git
             .tag()
@@ -372,13 +372,13 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
             .call()
     }
 
-    private fun getTagPrefix(extension: GradleReleasePaperworkPluginExtension) =
-        if (extension.tagPrefix.isPresent) "${extension.tagPrefix.get()}%s"
+    private fun getTagPattern(extension: GradleReleasePaperworkPluginExtension) =
+        if (extension.tagPattern.isPresent) extension.tagPattern.get()
         else DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN
 
     private fun getReleaseCommitRegex(extension: GradleReleasePaperworkPluginExtension): Regex {
-        val prefix = getTagPrefix(extension)
-        return prefix.replace("%s", "\\S+").toRegex()
+        val pattern = getTagPattern(extension)
+        return pattern.replace("%s", "\\S+").toRegex()
     }
 
     companion object {

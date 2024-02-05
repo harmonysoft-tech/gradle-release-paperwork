@@ -32,6 +32,7 @@ Example:
     * [Additional Release Info](#additional-release-info)
     * [Change Description](#change-description)
     * [Changes Limit](#changes-limit)
+    * [Define Tag Pattern](#define-tag-pattern)
 
 ## How to Use
 
@@ -177,3 +178,23 @@ releasePaperwork {
     maxChangesPerRelease.set(50)
 }
 ```
+
+### Define Tag Pattern
+
+There is a specific case where we want created tag name to be customized. It can be done by set the `tagPattern` as below:
+
+```
+releasePaperwork {
+   tagPattern.set("v%s")
+}
+```
+
+Which will create a tag with this format:
+
+```v1.0.0```
+
+Do remember that the character `%s` must be provided as the place for the version. If `tagPattern` does not defined, default pattern
+will be `release-%s` which will create a tag with this format:
+
+```release-1.0.0```
+

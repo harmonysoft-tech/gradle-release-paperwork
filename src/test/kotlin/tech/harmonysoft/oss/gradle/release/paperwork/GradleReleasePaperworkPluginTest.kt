@@ -478,40 +478,48 @@ internal class GradleReleasePaperworkPluginTest {
         """.trimIndent())
     }
 
-    @Test
-    fun `when release is made then git tag is created`() {
-        val version = "1.0.0"
-        gradleFile.appendText("""
-            version = "$version"
-        """.trimIndent())
+    private fun prepareAndRunTagPatternTest(
+        gradleFileContent: String,
+        expectedResult: String,
+    ) {
+        gradleFile.appendText(gradleFileContent)
         runBuild()
 
-        val expected = String.format(GradleReleasePaperworkPlugin.DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN, version)
         val tag = git.tagList().call().find {
             val actual = it.name.substring("refs/tags/".length)
-            actual == expected
+            actual == expectedResult
         }
         assertThat(tag).isNotNull
     }
 
     @Test
-    fun `when tagPrefix is defined then tag created will be using that`() {
+    fun `when release is made and no tagPattern defined then git tag is created with default pattern`() {
         val version = "1.0.0"
-        val prefix = "v"
-        gradleFile.appendText("""
+        val content =  """
+            version = "$version"
+        """.trimIndent()
+
+        prepareAndRunTagPatternTest(
+            content,
+            String.format(GradleReleasePaperworkPlugin.DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN, version)
+        )
+    }
+
+    @Test
+    fun `when release is made and tagPattern is defined then tag is created and named using tagPattern`() {
+        val version = "1.0.0"
+        val pattern = "v%s"
+        val content = """
             version = "$version"
             
             releasePaperwork {
-                tagPrefix.set("$prefix")
+                tagPattern.set("$pattern")
             }
-        """.trimIndent())
-        runBuild()
+        """.trimIndent()
 
-        val expected = "$prefix$version"
-        val tag = git.tagList().call().find {
-            val actual = it.name.substring("refs/tags/".length)
-            actual == expected
-        }
-        assertThat(tag).isNotNull
+        prepareAndRunTagPatternTest(
+            content,
+            String.format(pattern, version)
+        )
     }
 }

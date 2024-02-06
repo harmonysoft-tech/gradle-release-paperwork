@@ -55,9 +55,10 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
                 val commit = commitChanges(
                     project = project,
                     newVersion = versionToRelease,
+                    extension = extension,
                     changedFiles = arrayOf(releaseNotesFile, getProjectVersionFile(project, extension))
                 )
-                createTag(versionToRelease, project, commit)
+                createTag(versionToRelease, project, extension, commit)
             }
         }
     }
@@ -241,8 +242,9 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         val log = Git.open(project.rootDir).log().call()
         val result = mutableListOf<String>()
         val maxChanges = getMaxChangesPerRelease(extension)
+        val releaseCommitRegex = getReleaseCommitRegex(extension)
         for (commit in log) {
-            if (RELEASE_COMMIT_REGEX.matches(commit.shortMessage)) {
+            if (releaseCommitRegex.matches(commit.shortMessage)) {
                 // skip release commit
                 continue
             }
@@ -337,19 +339,30 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         projectVersionFile.writeText(newContent)
     }
 
-    private fun commitChanges(project: Project, newVersion: String, vararg changedFiles: File): RevCommit {
+    private fun commitChanges(
+        project: Project,
+        newVersion: String,
+        extension: GradleReleasePaperworkPluginExtension,
+        vararg changedFiles: File,
+    ): RevCommit {
         val git = Git.open(project.rootDir)
         for (file in changedFiles) {
             val pathToCommit = project.rootDir.toPath().relativize(file.toPath()).toString()
             project.logger.lifecycle("committing file $pathToCommit")
             git.add().addFilepattern(pathToCommit).call()
         }
-        return git.commit().setMessage(String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)).call()
+         val tagPattern = getTagPattern(extension)
+        return git.commit().setMessage(String.format(tagPattern, newVersion)).call()
     }
 
-    private fun createTag(newVersion: String, project: Project, commitId: RevCommit) {
+    private fun createTag(
+        newVersion: String,
+        project: Project,
+        extension: GradleReleasePaperworkPluginExtension,
+        commitId: RevCommit
+    ) {
         val git = Git.open(project.rootDir)
-        val tagName = String.format(RELEASE_COMMIT_MESSAGE_PATTERN, newVersion)
+        val tagName = String.format(getTagPattern(extension), newVersion)
         project.logger.lifecycle("creating git tag $tagName")
         git
             .tag()
@@ -359,15 +372,23 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
             .call()
     }
 
+    private fun getTagPattern(extension: GradleReleasePaperworkPluginExtension) =
+        if (extension.tagPattern.isPresent) extension.tagPattern.get()
+        else DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN
+
+    private fun getReleaseCommitRegex(extension: GradleReleasePaperworkPluginExtension): Regex {
+        val pattern = getTagPattern(extension)
+        return pattern.replace("%s", "\\S+").toRegex()
+    }
+
     companion object {
         val DEFAULT_PROJECT_VERSION_REGEX = """version\s*=\s*['"]([^'"]+)""".toRegex()
         const val DEFAULT_RELEASE_NOTES_FILE = "RELEASE_NOTES.md"
-        const val RELEASE_COMMIT_MESSAGE_PATTERN = "release-%s"
-        val RELEASE_COMMIT_REGEX = RELEASE_COMMIT_MESSAGE_PATTERN.replace("%s", "\\S+").toRegex()
+        const val DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN = "release-%s"
         const val RELEASE_DESCRIPTION_FORMAT = "v<version> released on <date><additional-release-description>"
         const val COMMIT_DESCRIPTION_FORMAT = "  * <commit-hash> <commit-description>"
         val COMMIT_DESCRIPTION_SUFFIX_REGEX = """\s+\*\s+""".toRegex()
-        val DATE_SYSTEM_PROPERTY_NAME = "paperwork.release.date"
+        const val DATE_SYSTEM_PROPERTY_NAME = "paperwork.release.date"
         val ZONE_UTC = ZoneId.of("UTC")
         private val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy z")
         private const val DEFAULT_MAX_CHANGES_PER_RELEASE = 20

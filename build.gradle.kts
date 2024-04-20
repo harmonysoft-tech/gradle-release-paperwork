@@ -1,28 +1,25 @@
-
 plugins {
-    kotlin("jvm") version "1.7.20"
-    id("com.gradle.plugin-publish") version "1.0.0"
-    id("tech.harmonysoft.oss.gradle.release.paperwork") version "1.6.0"
+    `java-gradle-plugin`
+    id("com.gradle.plugin-publish") version "1.2.1"
+    kotlin("jvm") version "1.9.23"
+    id("tech.harmonysoft.oss.gradle.release.paperwork") version "1.8.0"
 }
 
 group = "tech.harmonysoft"
 version = "1.7.0"
 
 gradlePlugin {
+    website = "http://gradle-release-paperwork.oss.harmonysoft.tech/"
+    vcsUrl = "https://github.com/denis-zhdanov/gradle-release-paperwork"
     plugins {
-        create("releasePaperWorkPlugin") {
+        create("releasePaperworkPlugin") {
             id = "tech.harmonysoft.oss.gradle.release.paperwork"
             implementationClass = "tech.harmonysoft.oss.gradle.release.paperwork.GradleReleasePaperworkPlugin"
             displayName = "gradle git release paperwork"
-            description = "Automatically populates release notes by git commits on release"
+            description = "handles release paperwork activities - release notes population, git tag creation, etc"
+            tags = listOf("git", "release")
         }
     }
-}
-
-pluginBundle {
-    website = "http://gradle-release-paperwork.oss.harmonysoft.tech/"
-    vcsUrl = "https://github.com/denis-zhdanov/gradle-release-paperwork"
-    tags = listOf("git", "release")
 }
 
 repositories {
@@ -30,12 +27,10 @@ repositories {
 }
 
 dependencies {
-    api(gradleApi())
-    api("org.eclipse.jgit:org.eclipse.jgit:6.3.0.202209071007-r")
+    api("org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r")
 
-    testImplementation(gradleTestKit())
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
-    testImplementation("org.assertj:assertj-core:3.23.1")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.assertj:assertj-core:3.25.3")
 }
 
 tasks.withType<Test>().configureEach {

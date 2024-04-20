@@ -1,3 +1,5 @@
+## v1.9.0 released on 20 Apr 2024 UTC
+  * 990433cd6a126a26d7c88c4082fa46098db08188 testing CI
 ## v1.8.0 released on 20 Apr 2024 UTC
   * dce65bdfac10b2d08f0a512de50016871895041c updated to the latest versions of everything as of April 2024
 ## v1.7.0 released on 29 Nov 2022 UTC

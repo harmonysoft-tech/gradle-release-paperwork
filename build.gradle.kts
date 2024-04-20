@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "tech.harmonysoft"
-version = "1.8.0"
+version = "1.9.0"
 
 gradlePlugin {
     website = "http://gradle-release-paperwork.oss.harmonysoft.tech/"

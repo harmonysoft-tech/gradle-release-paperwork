@@ -1,3 +1,5 @@
+## v1.8.0 released on 20 Apr 2024 UTC
+  * dce65bdfac10b2d08f0a512de50016871895041c updated to the latest versions of everything as of April 2024
 ## v1.7.0 released on 29 Nov 2022 UTC
   * fe0fa9be0c0a090826e0e8780baff533e240fa8e release paperwork 1.6.0
   * 20a1275cd5f4df37132715f1237ad84c1d3f3141 logging tag creation

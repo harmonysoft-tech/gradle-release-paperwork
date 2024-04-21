@@ -8,6 +8,10 @@ plugins {
 group = "tech.harmonysoft"
 version = "1.9.0"
 
+kotlin {
+    jvmToolchain(8)
+}
+
 gradlePlugin {
     website = "http://gradle-release-paperwork.oss.harmonysoft.tech/"
     vcsUrl = "https://github.com/denis-zhdanov/gradle-release-paperwork"
@@ -27,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    api("org.eclipse.jgit:org.eclipse.jgit:6.9.0.202403050737-r")
+    api("org.eclipse.jgit:org.eclipse.jgit:5.11.0.202103091610-r")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
     testImplementation("org.assertj:assertj-core:3.25.3")

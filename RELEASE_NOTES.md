@@ -1,3 +1,5 @@
+## v1.10.0 released on 21 Apr 2024 UTC
+  * c462adb6755aa42abb2641920f7c76e3f54c20ea configure the plugin to be java8 compatible
 ## v1.9.0 released on 20 Apr 2024 UTC
   * 990433cd6a126a26d7c88c4082fa46098db08188 testing CI
 ## v1.8.0 released on 20 Apr 2024 UTC

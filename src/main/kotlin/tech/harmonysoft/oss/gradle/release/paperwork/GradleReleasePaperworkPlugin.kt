@@ -24,6 +24,8 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         }
         val extension = project.extensions.create("releasePaperwork", GradleReleasePaperworkPluginExtension::class.java)
         project.task("release-paperwork") { task ->
+            task.group = "Release"
+            task.description = "Increments project version, creates a git tag and populates release notes file"
             task.doLast {
                 val releaseNotesFile = getReleaseNotesFile(project, extension)
                 val lastReleasedInfo = maybeGetLastReleasedInfo(project, releaseNotesFile)

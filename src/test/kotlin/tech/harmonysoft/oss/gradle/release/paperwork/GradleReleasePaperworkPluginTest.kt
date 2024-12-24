@@ -123,6 +123,18 @@ internal class GradleReleasePaperworkPluginTest {
         assertThat(paths).contains(expectedPath.toString())
     }
 
+    private fun verifyTagExists(tagName: String) {
+        val availableTags = mutableListOf<String>()
+        val tag = git.tagList().call().find {
+            val actual = it.name.substring("refs/tags/".length)
+            availableTags += actual
+            actual == tagName
+        }
+        assertThat(tag)
+            .describedAs("tag '$tagName' does not exist, available tags: ${availableTags.joinToString()}")
+            .isNotNull
+    }
+
     @Test
     fun `when no version is defined in gradle file then the build fails`() {
         verifyFailure("can't extract project version")
@@ -162,6 +174,7 @@ internal class GradleReleasePaperworkPluginTest {
               * ${getCommitDescriptionInNotes(commit1message)}
 
         """.trimIndent())
+        verifyTagExists("v$version")
     }
 
     @Test
@@ -480,16 +493,11 @@ internal class GradleReleasePaperworkPluginTest {
 
     private fun prepareAndRunTagPatternTest(
         gradleFileContent: String,
-        expectedResult: String,
+        expectedTagName: String,
     ) {
         gradleFile.appendText(gradleFileContent)
         runBuild()
-
-        val tag = git.tagList().call().find {
-            val actual = it.name.substring("refs/tags/".length)
-            actual == expectedResult
-        }
-        assertThat(tag).isNotNull
+        verifyTagExists(expectedTagName)
     }
 
     @Test
@@ -508,7 +516,7 @@ internal class GradleReleasePaperworkPluginTest {
     @Test
     fun `when release is made and tagPattern is defined then tag is created and named using tagPattern`() {
         val version = "1.0.0"
-        val pattern = "v%s"
+        val pattern = "release-%s"
         val content = """
             version = "$version"
             

@@ -18,7 +18,7 @@ Example:
     ```
 
   * the plugin commits the changes in *build.gradle.kts* and *RELEASE_NOTES.md* into git
-  * the plugin creates git tag `release-3.6.0` from the current sources
+  * the plugin creates git tag `v3.6.0` from the current sources
 
 ## Table of Contents
 
@@ -196,7 +196,7 @@ Which will create a tag with this format:
 ```v1.0.0```
 
 Do remember that the character `%s` must be provided as the place for the version. If `tagPattern` does not defined, default pattern
-will be `release-%s` which will create a tag with this format:
+will be `v%s` which will create a tag with this format:
 
-```release-1.0.0```
+```v1.0.0```
 

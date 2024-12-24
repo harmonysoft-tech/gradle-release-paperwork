@@ -392,7 +392,7 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
         val SEMVER_WITH_PRE_RELEASE_BUILD_REGEX = """(\d+)\.(\d+)\.(\d+)-(.+)""".toRegex()
         val SEMVER_WITHOUT_BUILD_REGEX = """(\d+)\.(\d+)\.(\d+)""".toRegex()
         const val DEFAULT_RELEASE_NOTES_FILE = "RELEASE_NOTES.md"
-        const val DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN = "release-%s"
+        const val DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN = "v%s"
         const val RELEASE_DESCRIPTION_FORMAT = "v<version> released on <date><additional-release-description>"
         const val COMMIT_DESCRIPTION_FORMAT = "  * <commit-hash> <commit-description>"
         val COMMIT_DESCRIPTION_SUFFIX_REGEX = """\s+\*\s+""".toRegex()

@@ -70,6 +70,8 @@ releasePaperwork {
 
 Target use-case is described in [Version File Location](#version-file-location), this property allows to define custom regex for current project version extraction from the version file. Default value is `version\s*=\s*['"]([^'"]+)` to cover cases like `version = "1.0.0"`
 
+**Note**: []
+
 ### Release Notes File Location
 
 By default, the plugin writes release notes to file `RELEASE_NOTES.md` located at the project. However, it's possible to define custom file to use for that via `releaseNotesFile` property (its location is relative to root project's directory):

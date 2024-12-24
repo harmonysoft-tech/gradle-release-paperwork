@@ -206,30 +206,35 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
     }
 
     private fun incrementVersion(version: String): String {
-        val minorTextStart = version.indexOf(".") + 1
-        if (minorTextStart <= 0 || minorTextStart >= version.length) {
+        return SEMVER_WITH_BUILD_REGEX.matchEntire(version)?.let { match ->
+            val minorVersion = parseNumericVersion(version, match.groupValues[2], "minor")
+            val buildVersion = parseNumericVersion(version, match.groupValues[4], "build")
+            "${match.groupValues[1]}.${minorVersion + 1}.0+${buildVersion + 1}"
+        }
+        ?: SEMVER_WITH_PRE_RELEASE_BUILD_REGEX.matchEntire(version)?.let { match ->
+            val minorVersion = parseNumericVersion(version, match.groupValues[2], "minor")
+            val buildVersion = parseNumericVersion(version, match.groupValues[4], "build")
+            "${match.groupValues[1]}.${minorVersion + 1}.0-${buildVersion + 1}"
+        }
+        ?: SEMVER_WITHOUT_BUILD_REGEX.matchEntire(version)?.let { match ->
+            val minorVersion = parseNumericVersion(version, match.groupValues[2], "minor")
+            "${match.groupValues[1]}.${minorVersion + 1}.0"
+        } ?: run {
             throw GradleException(
-                "can't increment project version from current version '$version' - it's expected to conform "
-                + "to semver format but there is no point symbol (.) in it"
+                "can't increment project version from current version '$version' - it's expected to conform to "
+                + "semver format ('$SEMVER_WITH_BUILD_REGEX' with build version or '$SEMVER_WITHOUT_BUILD_REGEX' "
+                + "without build version)"
             )
         }
+    }
 
-        val minorTextEnd = version.indexOf(".", minorTextStart)
-        if (minorTextEnd <= minorTextStart) {
-            throw GradleException(
-                "can't increment project version from current version '$version' - it's expected to conform "
-                + "to semver format but there is no second point symbol (.) in it"
-            )
-        }
-
-        val minorVersionString = version.substring(minorTextStart, minorTextEnd)
-        try {
-            val currentMinor = minorVersionString.toInt()
-            return version.substring(0, minorTextStart) + (currentMinor + 1) + ".0"
+    private fun parseNumericVersion(fullVersion: String, versionToParse: String, versionToParseName: String): Int {
+        return try {
+            versionToParse.toInt()
         } catch (e: Exception) {
             throw GradleException(
-                "can't increment project version from current version '$version' - it's expected to conform "
-                + "to semver format but its minor version ($minorVersionString) is not a number"
+                "can't increment project version from current version '$fullVersion' - it's expected to conform "
+                + "to semver format but its $versionToParseName version ($versionToParse) is not a number"
             )
         }
     }
@@ -383,6 +388,9 @@ class GradleReleasePaperworkPlugin : Plugin<Project> {
 
     companion object {
         val DEFAULT_PROJECT_VERSION_REGEX = """version\s*=\s*['"]([^'"]+)""".toRegex()
+        val SEMVER_WITH_BUILD_REGEX = """(\d+)\.(\d+)\.(\d+)\+(.+)""".toRegex()
+        val SEMVER_WITH_PRE_RELEASE_BUILD_REGEX = """(\d+)\.(\d+)\.(\d+)-(.+)""".toRegex()
+        val SEMVER_WITHOUT_BUILD_REGEX = """(\d+)\.(\d+)\.(\d+)""".toRegex()
         const val DEFAULT_RELEASE_NOTES_FILE = "RELEASE_NOTES.md"
         const val DEFAULT_RELEASE_COMMIT_MESSAGE_PATTERN = "release-%s"
         const val RELEASE_DESCRIPTION_FORMAT = "v<version> released on <date><additional-release-description>"

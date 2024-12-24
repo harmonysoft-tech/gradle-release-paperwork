@@ -522,4 +522,68 @@ internal class GradleReleasePaperworkPluginTest {
             String.format(pattern, version)
         )
     }
+
+    @Test
+    fun `when flutter semver with build version is used then the both version and build number are incremented`() {
+        val pubspecFile = File(rootProjectDir, "pubspec.yaml").also {
+            it.writeText("""
+                name: some-name
+                version: 1.0.0+1
+                environment:
+                  sdk: 3.5.1
+                  flutter: 3.24.1
+            """.trimIndent())
+        }
+        gradleFile.appendText("""
+            releasePaperwork {
+                 projectVersionFile.set("pubspec.yaml")
+                 projectVersionRegex.set("version:\\s*([^\\s]+)")
+             }
+        """.trimIndent())
+        runBuild()
+
+        makeCommit("some-feature")
+
+        runBuild()
+
+        assertThat(pubspecFile.readText()).isEqualTo("""
+            name: some-name
+            version: 1.1.0+2
+            environment:
+              sdk: 3.5.1
+              flutter: 3.24.1
+        """.trimIndent())
+    }
+
+    @Test
+    fun `when flutter semver with pre-release version is used then the both version and build number are incremented`() {
+        val pubspecFile = File(rootProjectDir, "pubspec.yaml").also {
+            it.writeText("""
+                name: some-name
+                version: 1.0.2-4
+                environment:
+                  sdk: 3.5.1
+                  flutter: 3.24.1
+            """.trimIndent())
+        }
+        gradleFile.appendText("""
+            releasePaperwork {
+                 projectVersionFile.set("pubspec.yaml")
+                 projectVersionRegex.set("version:\\s*([^\\s]+)")
+             }
+        """.trimIndent())
+        runBuild()
+
+        makeCommit("some-feature")
+
+        runBuild()
+
+        assertThat(pubspecFile.readText()).isEqualTo("""
+            name: some-name
+            version: 1.1.0-5
+            environment:
+              sdk: 3.5.1
+              flutter: 3.24.1
+        """.trimIndent())
+    }
 }

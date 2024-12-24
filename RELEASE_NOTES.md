@@ -1,3 +1,5 @@
+## v1.11.0 released on 24 Dec 2024 UTC
+  * ee956d1c706b5a575d0052751428b6f0973c9b0b #3 Change default git tag pattern
 ## v1.10.0 released on 21 Apr 2024 UTC
   * c462adb6755aa42abb2641920f7c76e3f54c20ea configure the plugin to be java8 compatible
 ## v1.9.0 released on 20 Apr 2024 UTC
